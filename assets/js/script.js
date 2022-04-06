@@ -1,7 +1,7 @@
 // VARIABLES
 
-// save task button ref
-const buttonEl = document.querySelector("#save-task");
+// form ref
+const formEl = document.querySelector("#task-form");
 
 // tasks to do list ref
 const tasksToDoEl = document.querySelector("#tasks-to-do");
@@ -11,6 +11,8 @@ const tasksToDoEl = document.querySelector("#tasks-to-do");
 
 // function for creating task list elements
 const createTaskHandler = () => {
+    event.preventDefault();
+
     let listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
     listItemEl.textContent = prompt("What task would you like to add?");
@@ -19,4 +21,5 @@ const createTaskHandler = () => {
 
 
 // WORK SPACE
-buttonEl.addEventListener("click", createTaskHandler);
+
+formEl.addEventListener("submit", createTaskHandler);
