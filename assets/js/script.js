@@ -89,15 +89,21 @@ const createTaskEl = taskDataObj => {
     listItemEl.appendChild(taskActionsEl);
     
     // add entire list item to list
-    if (taskDataObj.status === 'to do'){
-        listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
-        tasksToDoEl.appendChild(listItemEl);
-    } else if (taskDataObj.status === 'in progress'){
-        listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
-        tasksInProgressEl.appendChild(listItemEl) 
-    } else if (taskDataObj.status === 'completed'){
-        listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
-        tasksCompletedEl.appendChild(listItemEl);
+    switch (taskDataObj.status) {
+        case "to do":
+            listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+            tasksToDoEl.appendChild(listItemEl);
+            break;
+        case "in progress":
+            listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+            tasksInProgressEl.appendChild(listItemEl);
+            break;
+        case "completed":
+            listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+            tasksCompletedEl.appendChild(listItemEl);
+            break;
+        default:
+            console.log("Something went wrong!");
     }
 
     taskDataObj.id = taskIdCounter;
