@@ -1,5 +1,6 @@
 // VARIABLES
 let taskIdCounter = 0;
+let tasks = [];
 const pageContentEl = document.querySelector("#page-content");
 
 // form ref
@@ -8,7 +9,7 @@ const formEl = document.querySelector("#task-form");
 // tasks to list refs
 const tasksToDoEl = document.querySelector("#tasks-to-do");
 const tasksInProgressEl = document.querySelector("#tasks-in-progress");
-const tasksCompleted = document.querySelector("#tasks-completed");
+const tasksCompletedEl = document.querySelector("#tasks-completed");
 
 // FUNCTIONS
 
@@ -36,7 +37,8 @@ const taskFormHandler = event => {
         // package up data as object
         let taskDataObj = {
             name: taskNameInput,
-            type: taskTypeInput
+            type: taskTypeInput,
+            status: "to do"
         };
         // send it as an argument to createTaskEl
         createTaskEl(taskDataObj);
@@ -50,6 +52,16 @@ const completeEditTask = (taskName, taskType, taskId) => {
     // set new values
     taskSelected.querySelector("h3.task-name").textContent = taskName;
     taskSelected.querySelector("span.task-type").textContent = taskType;
+
+    // loop through tasks array and task object with new content
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    };
+
+    saveTasks();
 
     alert("Task Updated!");
 
@@ -77,7 +89,21 @@ const createTaskEl = taskDataObj => {
     listItemEl.appendChild(taskActionsEl);
     
     // add entire list item to list
-    tasksToDoEl.appendChild(listItemEl);
+    if (taskDataObj.status === 'to do'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+        tasksToDoEl.appendChild(listItemEl);
+    } else if (taskDataObj.status === 'in progress'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+        tasksInProgressEl.appendChild(listItemEl) 
+    } else if (taskDataObj.status === 'completed'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+        tasksCompletedEl.appendChild(listItemEl);
+    }
+
+    taskDataObj.id = taskIdCounter;
+    tasks.push(taskDataObj);
+
+    saveTasks();
     
     // increase task counter for next unique id
     taskIdCounter++;
@@ -129,6 +155,19 @@ const createTaskActions = taskId => {
 const deleteTask = taskId => {
     let taskSelected = document.querySelector(`.task-item[data-task-id='${taskId}']`);
     taskSelected.remove();
+
+    // new array to hold updated list of tasks
+    let updatedTaskArr = [];
+
+    // loop through current tasks
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id !== parseInt(taskId)) {
+            updatedTaskArr.push(tasks[i]);
+        }
+    }
+    // reassign tasks array
+    tasks = updatedTaskArr;
+    saveTasks();
 };
 
 const editTask = taskId => {
@@ -150,7 +189,6 @@ const taskButtonHandler = event => {
     }
     // delete button was clicked
     else if (targetEl.matches(".delete-btn")) {
-        console.log("You clicked a delete button!");
         // get the element's task id
         let taskId = targetEl.getAttribute("data-task-id");
         deleteTask(taskId);
@@ -172,9 +210,41 @@ const taskStatusChangeHandler = event => {
     } else if (statusValue === "in progress") {
         tasksInProgressEl.appendChild(taskSelected);
     } else if (statusValue === "completed") {
-        tasksCompleted.appendChild(taskSelected);
+        tasksCompletedEl.appendChild(taskSelected);
     }
+
+    // loop through tasks and update object array
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].status = statusValue;
+        }
+    }
+    saveTasks();
 };
+
+const saveTasks = () => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+const loadTasks = () => {
+    let savedTasks =  localStorage.getItem("tasks");
+    
+    if (!savedTasks) {
+        return false;
+    }
+    
+    savedTasks = JSON.parse(savedTasks);
+    
+    for (let i = 0; i < savedTasks.length; i++) {
+        
+        console.log(createTaskEl(savedTasks[i]));
+
+    }
+
+};
+
+// LOAD TASKS
+loadTasks();
 
 // EVENT LISTENERS  
 
