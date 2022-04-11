@@ -238,9 +238,7 @@ const loadTasks = () => {
     for (let i = 0; i < savedTasks.length; i++) {
         
         console.log(createTaskEl(savedTasks[i]));
-
     }
-
 };
 
 // LOAD TASKS
