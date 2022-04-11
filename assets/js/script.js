@@ -9,7 +9,7 @@ const formEl = document.querySelector("#task-form");
 // tasks to list refs
 const tasksToDoEl = document.querySelector("#tasks-to-do");
 const tasksInProgressEl = document.querySelector("#tasks-in-progress");
-const tasksCompleted = document.querySelector("#tasks-completed");
+const tasksCompletedEl = document.querySelector("#tasks-completed");
 
 // FUNCTIONS
 
@@ -89,7 +89,16 @@ const createTaskEl = taskDataObj => {
     listItemEl.appendChild(taskActionsEl);
     
     // add entire list item to list
-    tasksToDoEl.appendChild(listItemEl);
+    if (taskDataObj.status === 'to do'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+        tasksToDoEl.appendChild(listItemEl);
+    } else if (taskDataObj.status === 'in progress'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+        tasksInProgressEl.appendChild(listItemEl) 
+    } else if (taskDataObj.status === 'completed'){
+        listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+        tasksCompletedEl.appendChild(listItemEl);
+    }
 
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
@@ -201,7 +210,7 @@ const taskStatusChangeHandler = event => {
     } else if (statusValue === "in progress") {
         tasksInProgressEl.appendChild(taskSelected);
     } else if (statusValue === "completed") {
-        tasksCompleted.appendChild(taskSelected);
+        tasksCompletedEl.appendChild(taskSelected);
     }
 
     // loop through tasks and update object array
@@ -216,6 +225,26 @@ const taskStatusChangeHandler = event => {
 const saveTasks = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 };
+
+const loadTasks = () => {
+    let savedTasks =  localStorage.getItem("tasks");
+    
+    if (!savedTasks) {
+        return false;
+    }
+    
+    savedTasks = JSON.parse(savedTasks);
+    
+    for (let i = 0; i < savedTasks.length; i++) {
+        
+        console.log(createTaskEl(savedTasks[i]));
+
+    }
+
+};
+
+// LOAD TASKS
+loadTasks();
 
 // EVENT LISTENERS  
 
