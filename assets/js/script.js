@@ -61,6 +61,8 @@ const completeEditTask = (taskName, taskType, taskId) => {
         }
     };
 
+    saveTasks();
+
     alert("Task Updated!");
 
     // reset form
@@ -69,9 +71,6 @@ const completeEditTask = (taskName, taskType, taskId) => {
 };
 
 const createTaskEl = taskDataObj => {
-    // test
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
     // create list items
     let listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
@@ -94,6 +93,8 @@ const createTaskEl = taskDataObj => {
 
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
+
+    saveTasks();
     
     // increase task counter for next unique id
     taskIdCounter++;
@@ -157,6 +158,7 @@ const deleteTask = taskId => {
     }
     // reassign tasks array
     tasks = updatedTaskArr;
+    saveTasks();
 };
 
 const editTask = taskId => {
@@ -178,7 +180,6 @@ const taskButtonHandler = event => {
     }
     // delete button was clicked
     else if (targetEl.matches(".delete-btn")) {
-        console.log("You clicked a delete button!");
         // get the element's task id
         let taskId = targetEl.getAttribute("data-task-id");
         deleteTask(taskId);
@@ -209,6 +210,11 @@ const taskStatusChangeHandler = event => {
             tasks[i].status = statusValue;
         }
     }
+    saveTasks();
+};
+
+const saveTasks = () => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
 // EVENT LISTENERS  
