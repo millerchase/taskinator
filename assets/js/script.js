@@ -104,6 +104,7 @@ const createTaskEl = taskDataObj => {
             break;
         default:
             console.log("Something went wrong!");
+            break;
     }
 
     taskDataObj.id = taskIdCounter;
